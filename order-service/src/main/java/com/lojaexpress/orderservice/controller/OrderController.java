@@ -1,5 +1,6 @@
 package com.lojaexpress.orderservice.controller;
 
+import com.lojaexpress.orderservice.exception.ProductNotFoundException;
 import com.lojaexpress.orderservice.service.OrderService;
 import com.lojaexpress.orderservice.model.Order;
 import lombok.RequiredArgsConstructor;
@@ -33,8 +34,12 @@ public class OrderController {
 
     @PostMapping
     public ResponseEntity<Order> create(@RequestBody Order order) {
-        Order orderCreated = orderService.create(order);
+        try {
+            Order orderCreated = orderService.create(order);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(orderCreated);
+            return ResponseEntity.status(HttpStatus.CREATED).body(orderCreated);
+        } catch (ProductNotFoundException exception) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

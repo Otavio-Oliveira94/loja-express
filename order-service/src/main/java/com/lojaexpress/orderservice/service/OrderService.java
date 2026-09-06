@@ -1,5 +1,8 @@
 package com.lojaexpress.orderservice.service;
 
+import com.lojaexpress.orderservice.client.ProductClient;
+import com.lojaexpress.orderservice.exception.ProductNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import com.lojaexpress.orderservice.model.Order;
 
@@ -7,7 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class OrderService {
+    private final ProductClient productClient;
     private final List<Order> orders = new ArrayList<>();
     private Long nextId = 1L;
 
@@ -26,6 +31,10 @@ public class OrderService {
     }
 
     public Order create(Order order) {
+        if (!productClient.existsById(order.getProductId())) {
+            throw new ProductNotFoundException();
+        }
+
         order.setId(nextId);
         nextId++;
 
