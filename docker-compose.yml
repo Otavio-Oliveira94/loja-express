@@ -1,0 +1,27 @@
+services:
+  product-service:
+    build:
+      context: ./product-service
+    image: product-image
+    ports:
+      - "8080:8080"
+    networks:
+      - loja-network
+
+  order-service:
+    build:
+      context: ./order-service
+    image: order-image
+    ports:
+      - "8081:8081"
+    environment:
+      PRODUCT_SERVICE_URL: http://product-service:8080
+    depends_on:
+      - product-service
+    networks:
+      - loja-network
+
+networks:
+  loja-network:
+    name: loja-network
+    driver: bridge
